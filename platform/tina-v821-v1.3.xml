@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="origin" fetch="ssh://git@github.com/sam-yangjj/"/>
+  
+  <default remote="origin" revision="main" sync-j="4" sync-c="true"/>
+
+  <!-- build 仓库，并创建软连接 -->
+  <project name="tina-v821-v1.3-build" path="build" revision="main">
+    <linkfile src="top_build.sh" dest="build.sh"/>
+  </project>
+
+  <!-- docs 仓库，并创建软连接 -->
+  <project name="tina-v821-v1.3-docs" path="docs" revision="main">
+    <linkfile src="README.md" dest="README.md"/>
+  </project>
+
+  <!-- 其他仓库 -->
+  <project name="tina-v821-v1.3-brandy" path="brandy" revision="main"/>
+  <project name="tina-v821-v1.3-bsp" path="bsp" revision="main"/>
+  <project name="tina-v821-v1.3-device" path="device" revision="main"/>
+  <project name="tina-v821-v1.3-kernel" path="kernel" revision="main"/>
+  <project name="tina-v821-v1.3-openwrt" path="openwrt" revision="main"/>
+  <project name="tina-v821-v1.3-platform" path="platform" revision="main"/>
+  <project name="tina-v821-v1.3-prebuilt" path="prebuilt" revision="main"/>
+  <project name="tina-v821-v1.3-rtos" path="rtos" revision="main"/>
+  <project name="tina-v821-v1.3-tools" path="tools" revision="main"/>
+</manifest>
