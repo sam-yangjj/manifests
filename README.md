@@ -52,3 +52,64 @@ repo init -u git@github.com:sam-yangjj/manifests.git -b tag_1.1 -m platform/tina
 repo sync -j4 --no-clone-bundle
 ```
 --no-clone-bundle: 禁用克隆包，跳过优化包，直接使用常规Git协议，避免因bundle校验失败导致的同步中断，首次同步速度可能稍慢，但更稳定。
+
+##  编译
+###  通过本机编译
+根据 SDK 手册的 README.md 安装相应依赖，直接编译即可
+###  通过 docker 编译
+根据本仓库的 ubuntu22.04 docker 镜像和 Dockerfile 构建镜像并创建容器
+##  lunch
+lunch 选择该选项
+```bash
+2.  v821-avaota_f1-tina                | Application    (应用场景) : Avaota F1/Avaota F1-B Development Board
+ Boot Type      (启动方式) : NORMAL    | Hardware Name  (硬件丝印) : Avaota F1/Avaota F1-B Development Board
+
+```
+接着根据芯片丝印选择具体型号
+```bash
+You're selecting board: v821-avaota_f1, choose your chip:
+    1 V821L2-XXX
+    2 V821M2-WXX
+    3 V821L2-WXX
+    4 V521D2-WXX
+    5 V821L2-BXX
+    6 V821M2-WBX
+    7 V821L2-WBX
+    8 V521D2-WBX
+    9 V821D2-WBX
+Which chip would you like? 7
+```
+接着 make pack 即可生成镜像
+##  注意事项
+拉取代码后，source build/envsetup.sh 会失败，创建 build/.tinatopdir 文件即可解决
+
+###  编译失败
+编译失败主要是项目中的大文件（>100MB的文件没有拉取下来）  
+有以下五个文件
+```bash
+find . -type f -size +100M -exec ls -l {} \;
+-rw-r--r-- 1 sam sam 187045012  2月  8 18:56 ./prebuilt/kernelbuilt/riscv32/nds32le-linux-glibc-v5d.txz
+-rw-r--r-- 1 sam sam 230047328  2月  8 18:57 ./prebuilt/rootfsbuilt/riscv/nds32le-linux-musl-v5d.tar.xz
+-rw-r--r-- 1 sam sam 171387236  2月  8 18:56 ./rtos/lichee/rtos/tools/Xuantie-900-gcc-elf-newlib-x86_64-V2.10.1.tar.gz
+-rw-r--r-- 1 sam sam 108280640  2月  8 18:56 ./brandy/brandy-2.0/tools/toolchain/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi.tar.xz
+-rw-r--r-- 1 sam sam 309457356  2月  8 18:56 ./brandy/brandy-2.0/tools/toolchain/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.8.1.tar.xz
+
+find . -type f -size +100M -exec ls -lh {} \;
+-rw-r--r-- 1 sam sam 179M  2月  8 18:56 ./prebuilt/kernelbuilt/riscv32/nds32le-linux-glibc-v5d.txz
+-rw-r--r-- 1 sam sam 220M  2月  8 18:57 ./prebuilt/rootfsbuilt/riscv/nds32le-linux-musl-v5d.tar.xz
+-rw-r--r-- 1 sam sam 164M  2月  8 18:56 ./rtos/lichee/rtos/tools/Xuantie-900-gcc-elf-newlib-x86_64-V2.10.1.tar.gz
+-rw-r--r-- 1 sam sam 104M  2月  8 18:56 ./brandy/brandy-2.0/tools/toolchain/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi.tar.xz
+-rw-r--r-- 1 sam sam 296M  2月  8 18:56 ./brandy/brandy-2.0/tools/toolchain/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.8.1.tar.xz
+
+find . -type f -size +100M -exec md5sum {} \;
+eb8edd2e5eca1a8838bc6a63cffd7590  ./prebuilt/kernelbuilt/riscv32/nds32le-linux-glibc-v5d.txz
+4b898eac1569ef4bc8ed4571ba520f42  ./prebuilt/rootfsbuilt/riscv/nds32le-linux-musl-v5d.tar.xz
+54ce0bab6090c1449234697951027c14  ./rtos/lichee/rtos/tools/Xuantie-900-gcc-elf-newlib-x86_64-V2.10.1.tar.gz
+063977200779374cf433424a440c2444  ./brandy/brandy-2.0/tools/toolchain/gcc-linaro-7.2.1-2017.11-x86_64_arm-linux-gnueabi.tar.xz
+86ad8ac0b0a2c80a5166977202e081b4  ./brandy/brandy-2.0/tools/toolchain/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.8.1.tar.xz
+
+```
+分别进入 prebuilt、rtos、brandy 仓库，通过以下命令拉取文件
+```bash
+git lfs pull
+```
