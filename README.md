@@ -22,6 +22,22 @@ chmod a+x ~/bin/repo
 echo "export PATH=~/bin:\$PATH" >> ~/.bashrc
 source ~/.bashrc
 ```
+###  国内源下载
+```bash
+#  下载 Repo 程序
+mkdir -p ~/bin
+
+# 使用清华镜像下载 (推荐)
+curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o ~/bin/repo
+
+#    设置执行权限
+chmod a+x ~/bin/repo
+
+#  将 Repo 添加到系统PATH
+echo "export PATH=~/bin:\$PATH" >> ~/.bashrc
+echo "export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'" >> ~/.bashrc
+source ~/.bashrc
+```
 ##  拉取代码
 拉取全志 v821 v1.3版本 平台代码
 ```bash
