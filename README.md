@@ -1,14 +1,22 @@
 # manifests 工程
 ##  概述
 本仓库包含用于管理多个 Git 仓库的 repo manifest 配置文件，支持 Android 或其他大型项目的代码管理。
+
 ##  目录结构
+
 ```bash
-├── platform                            # 平台相关manifests配置
-│   └── tina-v821-v1.3.xml              # 全志平台：v821-v1.3 SDK
-└── README.md                           # 本说明文件
+├── docker
+│   ├── Dockerfile                                  # 构建镜像的 dockerfile
+│   └── ubuntu-base-22.04-base-amd64.tar.gz         # 官方 ubuntu docker 镜像
+├── platform                                        # 平台相关 manifests 配置
+│   └── tina-v821-v1.3.xml                          # 全志平台：v821-v1.3 SDK
+└── README.md                                       # 本说明文件
 ```
+
 ##  准备工作
+
 下载 repo 命令
+
 ```bash
 #  下载 Repo 程序
 mkdir -p ~/bin
@@ -22,7 +30,9 @@ chmod a+x ~/bin/repo
 echo "export PATH=~/bin:\$PATH" >> ~/.bashrc
 source ~/.bashrc
 ```
+
 ###  国内源下载
+
 ```bash
 #  下载 Repo 程序
 mkdir -p ~/bin
@@ -38,26 +48,38 @@ echo "export PATH=~/bin:\$PATH" >> ~/.bashrc
 echo "export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'" >> ~/.bashrc
 source ~/.bashrc
 ```
+
 ##  拉取代码
+
 拉取全志 v821 v1.3版本 平台代码
+
 ```bash
 repo init -u git@github.com:sam-yangjj/manifests.git -b main -m platform/tina-v821-v1.3.xml
 ```
+
 ##  拉取某个 tag 平台代码
+
+以 tag_1.1 举例（实际按照实际有的 tag 拉取）
+
 ```bash
 repo init -u git@github.com:sam-yangjj/manifests.git -b tag_1.1 -m platform/tina-v821-v1.3.xml
 ```
+
 ##  同步代码
+
 ```bash
 repo sync -j4 --no-clone-bundle
 ```
+
 --no-clone-bundle: 禁用克隆包，跳过优化包，直接使用常规Git协议，避免因bundle校验失败导致的同步中断，首次同步速度可能稍慢，但更稳定。
 
 ##  编译
 ###  通过本机编译
 根据 SDK 手册的 README.md 安装相应依赖，直接编译即可
+
 ###  通过 docker 编译
 根据本仓库的 ubuntu22.04 docker 镜像和 Dockerfile 构建镜像并创建容器
+
 ##  lunch
 lunch 选择该选项
 ```bash
@@ -65,6 +87,7 @@ lunch 选择该选项
  Boot Type      (启动方式) : NORMAL    | Hardware Name  (硬件丝印) : Avaota F1/Avaota F1-B Development Board
 
 ```
+
 接着根据芯片丝印选择具体型号
 ```bash
 You're selecting board: v821-avaota_f1, choose your chip:
@@ -78,14 +101,17 @@ You're selecting board: v821-avaota_f1, choose your chip:
     8 V521D2-WBX
     9 V821D2-WBX
 Which chip would you like? 7
+
 ```
-接着 make pack 即可生成镜像
-##  注意事项
-拉取代码后，source build/envsetup.sh 会失败，创建 build/.tinatopdir 文件即可解决
+接着 make pack 即可生成镜像：out/v821l2-wbx_linux_avaota_f1_uart0_nor.img
+
 
 ###  编译失败
+####  情况一：编译链缺失
+
 编译失败主要是项目中的大文件（>100MB的文件没有拉取下来）  
 有以下五个文件
+
 ```bash
 find . -type f -size +100M -exec ls -l {} \;
 -rw-r--r-- 1 sam sam 187045012  2月  8 18:56 ./prebuilt/kernelbuilt/riscv32/nds32le-linux-glibc-v5d.txz
@@ -109,7 +135,14 @@ eb8edd2e5eca1a8838bc6a63cffd7590  ./prebuilt/kernelbuilt/riscv32/nds32le-linux-g
 86ad8ac0b0a2c80a5166977202e081b4  ./brandy/brandy-2.0/tools/toolchain/Xuantie-900-gcc-linux-5.10.4-glibc-x86_64-V2.8.1.tar.xz
 
 ```
+
 分别进入 prebuilt、rtos、brandy 仓库，通过以下命令拉取文件
+
 ```bash
 git lfs pull
+
 ```
+
+####  情况二：编译线程问题
+make -j4 多线程编译有问题，全志 SDK 的锅，问题不大  
+改为 make -j1 单线程编译即可，后续小修改用多线程即可
