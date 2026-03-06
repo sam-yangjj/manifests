@@ -80,6 +80,9 @@ repo sync -j4 --no-clone-bundle
 ###  通过 docker 编译
 根据本仓库的 ubuntu22.04 docker 镜像和 Dockerfile 构建镜像并创建容器
 
+##  source build/envsetup.sh
+设置环境变量
+
 ##  lunch
 lunch 选择该选项
 ```bash
@@ -103,7 +106,12 @@ You're selecting board: v821-avaota_f1, choose your chip:
 Which chip would you like? 7
 
 ```
-接着 make pack 即可生成镜像：out/v821l2-wbx_linux_avaota_f1_uart0_nor.img
+##  make
+进行编译
+##  pack
+进行打包  
+
+即可生成镜像：out/v821l2-wbx_linux_avaota_f1_uart0_nor.img
 
 
 ###  编译失败
