@@ -9,7 +9,8 @@
 │   ├── Dockerfile                                  # 构建镜像的 dockerfile
 │   └── ubuntu-base-22.04-base-amd64.tar.gz         # 官方 ubuntu docker 镜像
 ├── platform                                        # 平台相关 manifests 配置
-│   └── tina-v821-v1.3.xml                          # 全志平台：v821-v1.3 SDK
+│   ├── tina-v821-v1.3.xml                          # 全志平台：v821-v1.3 SDK
+│   └── tina-v821-v1.3_o.xml                        # 全志平台：v821-v1.3 SDK（简单方式）
 └── README.md                                       # 本说明文件
 ```
 
@@ -55,6 +56,11 @@ source ~/.bashrc
 
 ```bash
 repo init -u git@github.com:sam-yangjj/manifests.git -b main -m platform/tina-v821-v1.3.xml
+```
+
+通过 https 的方式拉取
+```bash
+repo init -u https://github.com/sam-yangjj/manifests.git -b main -m platform/tina-v821-v1.3_o.xml
 ```
 
 ##  拉取某个 tag 平台代码
